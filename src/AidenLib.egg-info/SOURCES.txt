@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+src/__init__.py
+src/main.py
+src/AidenLib.egg-info/PKG-INFO
+src/AidenLib.egg-info/SOURCES.txt
+src/AidenLib.egg-info/dependency_links.txt
+src/AidenLib.egg-info/top_level.txt
+src/aidenlib/cogs/helper_cog.py

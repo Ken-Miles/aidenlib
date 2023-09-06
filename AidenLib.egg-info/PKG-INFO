@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: AidenLib
+Version: 0.0.7
+Summary: AidenLib is a library for Aiden's projects.
+Author: Aiden Pearce
+Project-URL: Homepage, https://github.com/Ken-Miles/aidenlib
+Project-URL: Bug Tracker, https://github.com/Ken-Miles/aidenlib/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# Example Package
+
+This is a simple package with a couple common methods I use when using discord.py.

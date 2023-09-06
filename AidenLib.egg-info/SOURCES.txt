@@ -1,0 +1,8 @@
+LICENSE
+README.md
+main.py
+pyproject.toml
+AidenLib.egg-info/PKG-INFO
+AidenLib.egg-info/SOURCES.txt
+AidenLib.egg-info/dependency_links.txt
+AidenLib.egg-info/top_level.txt

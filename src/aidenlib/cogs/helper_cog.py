@@ -422,7 +422,7 @@ class BasicCog(commands.Cog):
 async def setup(bot: commands.Bot):
     global me
     await bot.add_cog(BasicCog(bot))
-    if bot.owner_id is not None:    me = [bot.owner_id]
-    elif bot.owner_ids is not None: me = bot.owner_ids
+    info = await bot.application_info()
+    if info.owner.id is not None:    me = [info.owner.id]
+    elif info.team is not None: me = [member.id for member in info.team.members]
     else: me = []
-        

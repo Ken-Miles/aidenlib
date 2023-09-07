@@ -193,16 +193,16 @@ class BasicCog(commands.Cog):
         await ctx.defer(ephemeral=True)
         guildid_: Optional[int] = None
         #if ctx.author.id in me:
-            if guildonly and ctx.guild:
-                if guildid is None: guildid_ = ctx.guild.id
-                else: guildid_ = int(guildid)
-                await self.bot.tree.sync(guild=discord.Object(int(guildid_)))
-            elif not guildonly:
-                await self.bot.tree.sync()
-            date = datetime.datetime.fromtimestamp(int(datetime.datetime.timestamp(datetime.datetime.now())))
-            print(f"{date}: updated tree")
-            await ctx.reply("Updated command tree.",ephemeral=True)
-            logger_info(f"Updated command tree: guildonly: {guildonly}, guildid: {guildid}")
+        if guildonly and ctx.guild:
+            if guildid is None: guildid_ = ctx.guild.id
+            else: guildid_ = int(guildid)
+            await self.bot.tree.sync(guild=discord.Object(int(guildid_)))
+        elif not guildonly:
+            await self.bot.tree.sync()
+        date = datetime.datetime.fromtimestamp(int(datetime.datetime.timestamp(datetime.datetime.now())))
+        print(f"{date}: updated tree")
+        await ctx.reply("Updated command tree.",ephemeral=True)
+        logger_info(f"Updated command tree: guildonly: {guildonly}, guildid: {guildid}")
         #else:
         #    await ctx.reply("You are not authorized to run this command.",delete_after=5,ephemeral=True)
 

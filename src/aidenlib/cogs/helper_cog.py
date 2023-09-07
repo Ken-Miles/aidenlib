@@ -164,17 +164,16 @@ def logger_error(message: str) -> bool:
         return True
     return False
 
+def is_me():
+    def predicate(interaction: discord.Interaction) -> bool:
+        if isinstance(interaction.client, commands.Bot):
+            return interaction.client.is_owner(interaction.user)
+    return app_commands.check(predicate)
+
 class BasicCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
-    @staticmethod
-    def is_me():
-        def predicate(interaction: discord.Interaction) -> bool:
-            if isinstance(interaction.client, commands.Bot):
-                return interaction.client.is_owner(interaction.user)
-        return app_commands.check(predicate)
-        
+            
     @commands.hybrid_command(name="ping",description="see what the bot's ping is",) #Add the guild ids in which the slash command will appear. If it should be in all, remove the argument, but note that it will take some time (up to an hour) to register the command if it's for all guilds.
     async def ping(self, ctx: commands.Context):
         msg: Optional[discord.Message] = None

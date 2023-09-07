@@ -165,9 +165,10 @@ def logger_error(message: str) -> bool:
     return False
 
 def is_me():
-    def predicate(interaction: discord.Interaction) -> bool:
+    async def predicate(interaction: discord.Interaction) -> bool:
         if isinstance(interaction.client, commands.Bot):
-            return interaction.client.is_owner(interaction.user)
+            return await interaction.client.is_owner(interaction.user)
+        return False
     return app_commands.check(predicate)
 
 class BasicCog(commands.Cog):

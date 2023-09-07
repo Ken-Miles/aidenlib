@@ -125,22 +125,22 @@ class EmbedPaginatorView(ui.View):
 # sending it
 
 async def reload_autocomp(interaction, current: str) -> List[app_commands.Choice[str]]:
-    if interaction.user.id in me:
-        returnv: List[app_commands.Choice[str]] = []
-        returnv2: List[app_commands.Choice[str]] = []
-        current = current.lower().strip()
-        for ext in pkgutil.iter_modules():
-            name = ext.name
-            if name+'.py' in os.listdir():
-                name = name.lower().strip()
-                if name.startswith(current):
-                    returnv.append(app_commands.Choice(name=ext.name,value=ext.name))
-                elif name in current:
-                    returnv2.append(app_commands.Choice(name=ext.name,value=ext.name))
-            if len(returnv) + len(returnv2) >= 25:
-                break
-        returnv.extend(returnv2)
-        return returnv
+    #if interaction.user.id in me:
+    returnv: List[app_commands.Choice[str]] = []
+    returnv2: List[app_commands.Choice[str]] = []
+    current = current.lower().strip()
+    for ext in pkgutil.iter_modules():
+        name = ext.name
+        if name+'.py' in os.listdir():
+            name = name.lower().strip()
+            if name.startswith(current):
+                returnv.append(app_commands.Choice(name=ext.name,value=ext.name))
+            elif name in current:
+                returnv2.append(app_commands.Choice(name=ext.name,value=ext.name))
+        if len(returnv) + len(returnv2) >= 25:
+            break
+    returnv.extend(returnv2)
+    return returnv
     return []
 
 def logger_info(message: str) -> bool:
@@ -192,7 +192,7 @@ class BasicCog(commands.Cog):
     async def updatecommands(self, ctx: commands.Context,guildonly: bool=False,guildid: Optional[str]=None):
         await ctx.defer(ephemeral=True)
         guildid_: Optional[int] = None
-        if ctx.author.id in me:
+        #if ctx.author.id in me:
             if guildonly and ctx.guild:
                 if guildid is None: guildid_ = ctx.guild.id
                 else: guildid_ = int(guildid)
@@ -203,8 +203,8 @@ class BasicCog(commands.Cog):
             print(f"{date}: updated tree")
             await ctx.reply("Updated command tree.",ephemeral=True)
             logger_info(f"Updated command tree: guildonly: {guildonly}, guildid: {guildid}")
-        else:
-            await ctx.reply("You are not authorized to run this command.",delete_after=5,ephemeral=True)
+        #else:
+        #    await ctx.reply("You are not authorized to run this command.",delete_after=5,ephemeral=True)
 
     @app_commands.command(name='changestatus',description='Changes the status of the bot.')
     @app_commands.choices(activitytype=[
@@ -225,9 +225,9 @@ class BasicCog(commands.Cog):
     @app_commands.guilds(*guilds)
     @is_me()
     async def changestatus(self, interaction: discord.Interaction, activitytype: Optional[app_commands.Choice[int]]=None, activitytext: Optional[str]=None, statustype: Optional[app_commands.Choice[int]]=None):
-        if interaction.user.id not in me:
-            await interaction.response.send_message("This command is not for you")
-            return
+        # if interaction.user.id not in me:
+        #     await interaction.response.send_message("This command is not for you")
+        #     return
 
         activitytype_: int
 
@@ -288,9 +288,9 @@ class BasicCog(commands.Cog):
     @is_me()
     async def pur(self, ctx: commands.Context, amount: int, user: Optional[discord.User]=None):
         try:
-            if ctx.author.id not in me:
-                await ctx.reply("This command is not for you.")
-                return
+            # if ctx.author.id not in me:
+            #     await ctx.reply("This command is not for you.")
+            #     return
             try:
                 await ctx.message.add_reaction(str(emojidict.get("check")))
             except:
@@ -314,9 +314,9 @@ class BasicCog(commands.Cog):
     @is_me()
     async def react_1(self, interaction: commands.Context, emoji: str, msgid: str):
         await interaction.defer(ephemeral=True)
-        if interaction.author.id not in me:
-            await interaction.reply("This command is not for you.")
-            return
+        # if interaction.author.id not in me:
+        #     await interaction.reply("This command is not for you.")
+        #     return
         msg = await interaction.channel.fetch_message(int(msgid))
         try:
             await msg.add_reaction(emoji)
@@ -347,17 +347,17 @@ class BasicCog(commands.Cog):
     @is_me()
     async def reload_extension(self, ctx: commands.Context, extension: str):
         await ctx.defer(ephemeral=True)
-        if ctx.author.id in me:
-            extension = extension.replace(".py","")
-            try:
-                await self.bot.reload_extension(extension)
-                await ctx.reply(f"Reloaded extension `{extension}(.py)`.",ephemeral=True)
-                logger_info(f"Reloaded extension {extension}.")
-            except Exception as e:
-                logger_warning(traceback.format_exc())
-                await ctx.reply(f"Exception: `{e}`",ephemeral=True)
-        else:
-            await ctx.reply("You are not authorized to run this command.",ephemeral=True)
+        #if ctx.author.id in me:
+        extension = extension.replace(".py","")
+        try:
+            await self.bot.reload_extension(extension)
+            await ctx.reply(f"Reloaded extension `{extension}(.py)`.",ephemeral=True)
+            logger_info(f"Reloaded extension {extension}.")
+        except Exception as e:
+            logger_warning(traceback.format_exc())
+            await ctx.reply(f"Exception: `{e}`",ephemeral=True)
+        # else:
+        #     await ctx.reply("You are not authorized to run this command.",ephemeral=True)
     
     @commands.has_permissions(ban_members=True)
     @commands.command(name="ban",description="Owner only. Bans a user.",guilds=[discord.Object(x) for x in guilds])
@@ -375,9 +375,9 @@ class BasicCog(commands.Cog):
             await ctx.reply("Invalid user id.",ephemeral=True)
             return
 
-        if ctx.author.id not in me:
-            await ctx.reply("You are not authorized to run this command.",ephemeral=True)
-            return
+        # if ctx.author.id not in me:
+        #     await ctx.reply("You are not authorized to run this command.",ephemeral=True)
+        #     return
 
         # getorfetch_dm
         if user_ is not None:

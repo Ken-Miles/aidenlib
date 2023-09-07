@@ -167,6 +167,13 @@ def logger_error(message: str) -> bool:
 class BasicCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+    
+    @staticmethod
+    def is_me():
+        def predicate(interaction: discord.Interaction) -> bool:
+            if isinstance(interaction.client, commands.Bot):
+                return interaction.client.is_owner(interaction.user)
+        return app_commands.check(predicate)
         
     @commands.hybrid_command(name="ping",description="see what the bot's ping is",) #Add the guild ids in which the slash command will appear. If it should be in all, remove the argument, but note that it will take some time (up to an hour) to register the command if it's for all guilds.
     async def ping(self, ctx: commands.Context):
@@ -181,6 +188,7 @@ class BasicCog(commands.Cog):
 
     @commands.hybrid_command(name='updatecommands',description='Owner only. Updates command tree.',with_app_command=True, guilds=[discord.Object(x) for x in guilds])
     @app_commands.guilds(*guilds)
+    @is_me()
     async def updatecommands(self, ctx: commands.Context,guildonly: bool=False,guildid: Optional[str]=None):
         await ctx.defer(ephemeral=True)
         guildid_: Optional[int] = None
@@ -215,6 +223,7 @@ class BasicCog(commands.Cog):
     app_commands.Choice(name='Invisible',value=5),
     ])
     @app_commands.guilds(*guilds)
+    @is_me()
     async def changestatus(self, interaction: discord.Interaction, activitytype: Optional[app_commands.Choice[int]]=None, activitytext: Optional[str]=None, statustype: Optional[app_commands.Choice[int]]=None):
         if interaction.user.id not in me:
             await interaction.response.send_message("This command is not for you")
@@ -276,6 +285,7 @@ class BasicCog(commands.Cog):
 
     @commands.hybrid_command(name='purge',description='boom',hidden=True)
     @app_commands.guilds(*guilds)
+    @is_me()
     async def pur(self, ctx: commands.Context, amount: int, user: Optional[discord.User]=None):
         try:
             if ctx.author.id not in me:
@@ -301,6 +311,7 @@ class BasicCog(commands.Cog):
 
     @commands.hybrid_command(name='react',description="add reaction",hidden=True)
     @app_commands.guilds(*guilds)
+    @is_me()
     async def react_1(self, interaction: commands.Context, emoji: str, msgid: str):
         await interaction.defer(ephemeral=True)
         if interaction.author.id not in me:
@@ -333,6 +344,7 @@ class BasicCog(commands.Cog):
     @commands.hybrid_command(name="reloadext",description="Owner only. Reloads an extension.",guilds=[discord.Object(x) for x in guilds])
     @app_commands.autocomplete(extension=reload_autocomp)
     @app_commands.guilds(*guilds)
+    @is_me()
     async def reload_extension(self, ctx: commands.Context, extension: str):
         await ctx.defer(ephemeral=True)
         if ctx.author.id in me:
@@ -350,6 +362,7 @@ class BasicCog(commands.Cog):
     @commands.has_permissions(ban_members=True)
     @commands.command(name="ban",description="Owner only. Bans a user.",guilds=[discord.Object(x) for x in guilds])
     @app_commands.guilds(*guilds)
+    @is_me()
     async def ban(self, ctx: commands.Context, user: Optional[discord.User]=None, id: Optional[str]=None, reason: str="A reason was not provided."):
         await ctx.defer(ephemeral=True)
         user_: Optional[Union[discord.User,discord.Member]] = None
@@ -390,6 +403,7 @@ class BasicCog(commands.Cog):
 
     @commands.command(name="dmhistory",description="Owner only. Sends the last 10 messages in a user's dm.",hidden=True,guilds=[discord.Object(x) for x in guilds])
     @app_commands.guilds(*guilds)
+    @is_me()
     async def dmhistory(self, ctx: commands.Context, user: Optional[discord.User]=None, id: Optional[str]=None):
         user_: Optional[Union[discord.User, discord.Member]] = None
         msgs = []
@@ -422,7 +436,7 @@ class BasicCog(commands.Cog):
 async def setup(bot: commands.Bot):
     global me
     await bot.add_cog(BasicCog(bot))
-    info = await bot.application_info()
-    if info.owner.id is not None:    me = [info.owner.id]
-    elif info.team is not None: me = [member.id for member in info.team.members]
-    else: me = []
+    # info = await bot.application_info()
+    # if info.owner.id is not None:    me = [info.owner.id]
+    # elif info.team is not None: me = [member.id for member in info.team.members]
+    # else: me = []

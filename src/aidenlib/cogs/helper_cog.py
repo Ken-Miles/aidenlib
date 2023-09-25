@@ -50,7 +50,7 @@ logger_: Optional[Logger] = None
 guilds: List[int] = []
 
 
-emojidict: dict[str | int, str] = {
+EMOJI_DICT: dict[str | int, str] = {
 'discord': '<:discord:1080925531580682360>',
 # global
 "x": '<a:X_:1046808381266067547>',
@@ -126,6 +126,7 @@ class EmbedPaginatorView(ui.View):
 
 async def reload_autocomp(interaction, current: str) -> List[app_commands.Choice[str]]:
     #if interaction.user.id in me:
+    """Autocomplete for the reloadext command."""
     returnv: List[app_commands.Choice[str]] = []
     returnv2: List[app_commands.Choice[str]] = []
     current = current.lower().strip()
@@ -141,9 +142,9 @@ async def reload_autocomp(interaction, current: str) -> List[app_commands.Choice
             break
     returnv.extend(returnv2)
     return returnv
-    return []
 
 def logger_info(message: str) -> bool:
+    """Logs a message to the logger."""
     global logger_
     if logger_ is not None:
         logger_.info(message)
@@ -151,44 +152,47 @@ def logger_info(message: str) -> bool:
     return False
 
 def logger_warning(message: str) -> bool:
+    """Logs a message to the logger."""
     global logger_
     if logger_ is not None:
-        logger_warning(message)
+        logger_.warning(message)
         return True
     return False
 
 def logger_error(message: str) -> bool:
+    """Logs a message to the logger."""
     global logger_
     if logger_ is not None:
-        logger_error(message)
+        logger_.error(message)
         return True
     return False
-
-def is_me():
-    async def predicate(interaction: discord.Interaction) -> bool:
-        if isinstance(interaction.client, commands.Bot):
-            return await interaction.client.is_owner(interaction.user)
-        return False
-    return app_commands.check(predicate)
 
 class BasicCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-            
+    
     @commands.hybrid_command(name="ping",description="see what the bot's ping is",) #Add the guild ids in which the slash command will appear. If it should be in all, remove the argument, but note that it will take some time (up to an hour) to register the command if it's for all guilds.
     async def ping(self, ctx: commands.Context):
         msg: Optional[discord.Message] = None
+
         a: float = datetime.datetime.now().timestamp()
-        if ctx.interaction is None: await ctx.message.add_reaction(str(emojidict.get('pong')))
-        else: msg = await ctx.reply("Testing ping...")
+
+        if ctx.interaction is None: 
+            await ctx.message.add_reaction(str(EMOJI_DICT.get('pong')))
+        else: 
+            msg = await ctx.reply("Testing ping...")
+        
         b: float = datetime.datetime.now().timestamp()
-        if msg: await msg.edit(content=f"{emojidict.get('pong')} Pong! Latency is `{str(self.bot.latency*1000)}`ms (edit time `{round(b-a)}`).")
-        else: await ctx.reply(f"{emojidict.get('pong')} Pong! Latency is `{str(self.bot.latency*1000)}`ms (edit time `{round(b-a)}`).")
+
+        if msg: 
+            await msg.edit(content=f"{EMOJI_DICT.get('pong')} Pong! Latency is `{str(self.bot.latency*1000)}`ms (edit time `{round(b-a)}`).")
+        else: 
+            await ctx.reply(f"{EMOJI_DICT.get('pong')} Pong! Latency is `{str(self.bot.latency*1000)}`ms (edit time `{round(b-a)}`).")
         logger_info(f"Latency is {str(self.bot.latency*1000)}ms (edit time {round(b-a)}).")
 
     @commands.hybrid_command(name='updatecommands',description='Owner only. Updates command tree.',with_app_command=True, guilds=[discord.Object(x) for x in guilds])
     @app_commands.guilds(*guilds)
-    @is_me()
+    @commands.is_owner()
     async def updatecommands(self, ctx: commands.Context,guildonly: bool=False,guildid: Optional[str]=None):
         await ctx.defer(ephemeral=True)
         guildid_: Optional[int] = None
@@ -208,22 +212,22 @@ class BasicCog(commands.Cog):
 
     @app_commands.command(name='changestatus',description='Changes the status of the bot.')
     @app_commands.choices(activitytype=[
-    app_commands.Choice(name='Playing',value=1),
-    app_commands.Choice(name='Streaming',value=2),
-    app_commands.Choice(name='Listening (to)',value=3),
-    app_commands.Choice(name='Watching',value=4),
-    app_commands.Choice(name='Custom',value=5),
-    app_commands.Choice(name='Competing',value=6),
-    ],
+        app_commands.Choice(name='Playing',value=1),
+        app_commands.Choice(name='Streaming',value=2),
+        app_commands.Choice(name='Listening (to)',value=3),
+        app_commands.Choice(name='Watching',value=4),
+        app_commands.Choice(name='Custom',value=5),
+        app_commands.Choice(name='Competing',value=6),
+        ],
     statustype=[
-    app_commands.Choice(name='Online',value=1),
-    app_commands.Choice(name='Offline',value=2),
-    app_commands.Choice(name='Idle',value=3),
-    app_commands.Choice(name='Do Not Disturb',value=4),
-    app_commands.Choice(name='Invisible',value=5),
+        app_commands.Choice(name='Online',value=1),
+        app_commands.Choice(name='Offline',value=2),
+        app_commands.Choice(name='Idle',value=3),
+        app_commands.Choice(name='Do Not Disturb',value=4),
+        app_commands.Choice(name='Invisible',value=5),
     ])
     @app_commands.guilds(*guilds)
-    @is_me()
+    @commands.is_owner()
     async def changestatus(self, interaction: discord.Interaction, activitytype: Optional[app_commands.Choice[int]]=None, activitytext: Optional[str]=None, statustype: Optional[app_commands.Choice[int]]=None):
         # if interaction.user.id not in me:
         #     await interaction.response.send_message("This command is not for you")
@@ -285,14 +289,14 @@ class BasicCog(commands.Cog):
 
     @commands.hybrid_command(name='purge',description='boom',hidden=True)
     @app_commands.guilds(*guilds)
-    @is_me()
+    @commands.is_owner()
     async def pur(self, ctx: commands.Context, amount: int, user: Optional[discord.User]=None):
         try:
             # if ctx.author.id not in me:
             #     await ctx.reply("This command is not for you.")
             #     return
             try:
-                await ctx.message.add_reaction(str(emojidict.get("check")))
+                await ctx.message.add_reaction(str(EMOJI_DICT.get("check")))
             except:
                 await ctx.defer(ephemeral=True)
             try:
@@ -302,16 +306,19 @@ class BasicCog(commands.Cog):
                 if isinstance(ctx.channel, discord.abc.GuildChannel):
                     deleted_msgs = await ctx.channel.purge(limit=amount, check=check)
                     await ctx.reply(f"Deleted {len(deleted_msgs)} messages.")
+                else:
+                    await ctx.channel.purge(limit=amount, check=check)
             except Exception as e:
                 await ctx.reply(f"Could not delete messages: {e}")
                 logger_error(f"Problem deleting messages: {e}")    
         except:
             logger_error(traceback.format_exc())
+        (await self.bot.create_guild(name="Aiden's Assistant")).create_inv
     
 
     @commands.hybrid_command(name='react',description="add reaction",hidden=True)
     @app_commands.guilds(*guilds)
-    @is_me()
+    @commands.is_owner()
     async def react_1(self, interaction: commands.Context, emoji: str, msgid: str):
         await interaction.defer(ephemeral=True)
         # if interaction.author.id not in me:
@@ -344,7 +351,7 @@ class BasicCog(commands.Cog):
     @commands.hybrid_command(name="reloadext",description="Owner only. Reloads an extension.",guilds=[discord.Object(x) for x in guilds])
     @app_commands.autocomplete(extension=reload_autocomp)
     @app_commands.guilds(*guilds)
-    @is_me()
+    @commands.is_owner()
     async def reload_extension(self, ctx: commands.Context, extension: str):
         await ctx.defer(ephemeral=True)
         #if ctx.author.id in me:
@@ -362,7 +369,7 @@ class BasicCog(commands.Cog):
     @commands.has_permissions(ban_members=True)
     @commands.command(name="ban",description="Owner only. Bans a user.",guilds=[discord.Object(x) for x in guilds])
     @app_commands.guilds(*guilds)
-    @is_me()
+    @commands.is_owner()
     async def ban(self, ctx: commands.Context, user: Optional[discord.User]=None, id: Optional[str]=None, reason: str="A reason was not provided."):
         await ctx.defer(ephemeral=True)
         user_: Optional[Union[discord.User,discord.Member]] = None
@@ -403,7 +410,7 @@ class BasicCog(commands.Cog):
 
     @commands.command(name="dmhistory",description="Owner only. Sends the last 10 messages in a user's dm.",hidden=True,guilds=[discord.Object(x) for x in guilds])
     @app_commands.guilds(*guilds)
-    @is_me()
+    @commands.is_owner()
     async def dmhistory(self, ctx: commands.Context, user: Optional[discord.User]=None, id: Optional[str]=None):
         user_: Optional[Union[discord.User, discord.Member]] = None
         msgs = []
@@ -434,6 +441,7 @@ class BasicCog(commands.Cog):
 
         
 async def setup(bot: commands.Bot):
+    """Sets up the cog."""
     global me
     await bot.add_cog(BasicCog(bot))
     # info = await bot.application_info()

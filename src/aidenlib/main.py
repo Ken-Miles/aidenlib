@@ -29,7 +29,8 @@ async def getorfetch_channel(channelid: int, guild: Optional[discord.Guild]=None
                 return None
     return channel
 
-async def getorfetch_user(userid: int, guild: Optional[discord.Guild]=None, bot: Optional[commands.Bot]=bot_) -> Optional[Union[discord.User, discord.Member]]:
+async def getorfetch_user(userid: int, guild: Optional[discord.Guild]=None, 
+    bot: Optional[commands.Bot]=bot_) -> Optional[Union[discord.User, discord.Member]]:
     """Gets a user from a guild or bot, if not found, fetches it. If a fetch is forbidden/not found, returns None"""
     global bot_
     if bot is not None: bot_ = bot
@@ -66,7 +67,8 @@ async def getorfetch_guild(guildid: int, bot: Optional[commands.Bot]=bot_) -> Op
 def makeembed(title: Optional[str]=None,timestamp: Optional[datetime.datetime]=None,color: Optional[discord.Colour]=None,
     description: Optional[str]=None, author: Optional[str]=None, author_url: Optional[str]=None, 
     author_icon_url: Optional[str]=None, footer: Optional[str]=None, footer_icon_url: Optional[str]=None, 
-    url: Optional[str]=None,image: Optional[str]=None,thumbnail: Optional[str]=None) -> discord.Embed:#embedtype: str='rich'):
+    url: Optional[str]=None,image: Optional[str]=None,thumbnail: Optional[str]=None, 
+    embedtype: Optional[str]='rich') -> discord.Embed:
     """Kind of useless, method is a bit shorter than chaining setters for an embed.
     Makes a discord.Embed object with the given parameters. If a parameter is None, it will not be added to the embed."""
     embed = discord.Embed()

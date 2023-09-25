@@ -1,5 +1,5 @@
-aidenlib/aidenlib.code-workspace
-pyproject.toml
-src/aidenlib.egg-info
-__pycache__
-src/aidenlib/cogs/__pycache__
+**/__pycache__
+**/.DS_Store
+dist
+/**/*.egg-info
+aidenlib.code-workspace
